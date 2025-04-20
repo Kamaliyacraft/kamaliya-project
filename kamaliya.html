@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kamaliya Group - Develop with Confidence</title>
+  <!-- Add Filestack JS Library -->
+  <script src="//static.filestackapi.com/filestack-js/3.x.x/filestack.min.js"></script>
+  <style>
+    /* Basic Reset & Font */
+    html { scroll-behavior: smooth; } /* Smooth scrolling for anchor links */
+    body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background-color: #f4f4f9; color: #333; padding-top: 60px; /* Account for fixed header */ padding-bottom: 60px; /* Account for fixed footer */ }
+
+    /* Header */
+    .header { background-color: #4a2c6f; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; position: fixed; width: 100%; top: 0; left: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.2); box-sizing: border-box; }
+    .logo-placeholder { font-size: 24px; font-weight: bold; } /* Placeholder for logo */
+    .nav { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; /* Allow wrapping on smaller screens */ }
+    .nav a, .nav button { color: white; text-decoration: none; padding: 5px 10px; border-radius: 5px; transition: background-color 0.3s ease; }
+    .nav a:hover, .nav button:hover { background-color: #6a4c9f; }
+
+    /* Dropdowns */
+    .dropdown { position: relative; display: inline-block; }
+    .dropdown-content { display: none; position: absolute; background-color: #4a2c6f; min-width: 180px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); z-index: 1; border-radius: 5px; margin-top: 5px; max-height: 300px; overflow-y: auto; }
+    .dropdown:hover .dropdown-content { display: block; }
+    .dropdown-content a { color: white; padding: 12px 16px; display: block; text-decoration: none; white-space: nowrap; }
+    .dropdown-content a:hover { background-color: #6a4c9f; }
+
+    /* Buttons in Header */
+    .nav-button { background-color: #e74c3c; border: none; cursor: pointer; font-size: 1em; }
+    .nav-button.login { background-color: #fff; color: #4a2c6f; border: 1px solid #4a2c6f; }
+    .nav-button.login:hover { background-color: #eee; }
+
+    /* Main Content Area */
+    .main { padding: 20px; } /* Removed margin-top, handled by body padding */
+
+    /* Hero Section */
+    .hero { background-color: #6a4c9f; /* Slightly lighter purple */ color: white; text-align: center; padding: 60px 20px; margin: -20px -20px 20px -20px; /* Extend to edges */ }
+    .hero h1 { margin: 0; font-size: 2.5em; }
+
+    /* Card Layout */
+    .cards { display: flex; justify-content: center; /* Center cards */ flex-wrap: wrap; gap: 20px; padding: 20px 0; }
+    .card { background-color: white; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 100%; max-width: 350px; /* Max width for cards */ padding: 20px; text-align: center; box-sizing: border-box; display: flex; flex-direction: column; }
+    .card img { width: 50px; height: 50px; margin-bottom: 10px; align-self: center; }
+    .card h2 { margin-top: 0; color: #4a2c6f; }
+    .card p { flex-grow: 1; } /* Make paragraphs fill space */
+
+    /* CTA Section */
+    .cta { background-color: #e74c3c; color: white; padding: 30px 20px; text-align: center; margin-top: 30px; border-radius: 8px; }
+    .cta h2 { margin-top: 0; }
+    .cta-button { background-color: #fff; color: #e74c3c; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-size: 1em; font-weight: bold; margin: 10px 5px; transition: background-color 0.3s, color 0.3s; }
+    .cta-button:hover { background-color: #f1f1f1; }
+    .cta a { color: #fff; text-decoration: underline; margin-left: 15px; }
+    .cta a:hover { color: #eee; }
+
+    /* Signup Form */
+    #signup { margin-top: 40px; padding: 30px; max-width: 600px; margin-left: auto; margin-right: auto; }
+    #signup h2 { margin-bottom: 10px; }
+    #signup p { margin-bottom: 15px; font-size: 0.9em; }
+    #signup form { display: flex; flex-direction: column; gap: 15px; }
+    #signup input[type="text"],
+    #signup input[type="email"],
+    #signup input[type="password"],
+    #signup select { padding: 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em; }
+    #signup select { appearance: none; background-color: white; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right .7em top 50%; background-size: .65em auto; }
+    #signup label { display: flex; align-items: center; gap: 8px; font-size: 0.9em; }
+    #signup input[type="checkbox"] { width: auto; }
+    #signup button[type="submit"] { background-color: #4a2c6f; color: white; padding: 15px; border: none; border-radius: 5px; font-size: 1.1em; cursor: pointer; transition: background-color 0.3s; }
+    #signup button[type="submit"]:hover { background-color: #6a4c9f; }
+    #signup form p { font-size: 0.8em; color: #666; line-height: 1.4; }
+    #signup form a { color: #4a2c6f; text-decoration: underline; }
+
+    /* Footer */
+    .footer { background-color: #333; /* Darker footer */ color: #ccc; text-align: center; padding: 15px 20px; position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1000; box-sizing: border-box; font-size: 0.9em; }
+    .footer div { margin-top: 5px; }
+    .footer a { margin: 0 10px; display: inline-block; }
+    .footer img { width: 20px; height: 20px; vertical-align: middle; }
+
+    /* Placeholder Sections for Anchor Links */
+    .placeholder-section { padding: 60px 20px; min-height: 300px; /* Give some height */ border-top: 1px solid #ddd; background-color: #fff; margin-top: 20px; }
+    .placeholder-section h2 { color: #4a2c6f; margin-top: 0; }
+
+    /* Result Div */
+    .result { margin: 20px; padding: 15px; background-color: #e0e0e0; border-radius: 5px; border: 1px solid #ccc; display: none; /* Hidden by default */ text-align: center; font-weight: bold; }
+
+    /* Style for Filestack elements (optional, can be adjusted) */
+    .filestack-section { margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; }
+    .filestack-section button { background-color: #6a4c9f; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; margin-top: 10px; font-size: 1em; }
+    .filestack-section button:hover { background-color: #4a2c6f; }
+    .filestack-results { margin-top: 15px; padding: 10px; background-color: #f0f0f0; border-radius: 5px; text-align: left; font-size: 0.9em; word-wrap: break-word; }
+    .filestack-status { font-style: italic; color: #555; font-size: 0.9em; margin-top: 5px; }
+
+    /* Responsive Adjustments */
+    @media (max-width: 992px) {
+        .header { flex-direction: column; align-items: flex-start; }
+        .nav { width: 100%; justify-content: flex-start; margin-top: 10px; }
+        .nav a, .nav button, .dropdown { margin-bottom: 5px; }
+        body { padding-top: 100px; /* Adjust for taller header */ }
+    }
+    @media (max-width: 768px) {
+        .card { max-width: 90%; /* Cards take more width */ }
+        .hero h1 { font-size: 2em; }
+        .nav { gap: 10px; }
+        .nav a, .nav button { padding: 4px 8px; font-size: 0.9em; }
+        .dropdown-content { min-width: 150px; }
+        body { padding-top: 120px; /* Further adjust for potential wrap */ }
+    }
+    @media (max-width: 480px) {
+        .nav { flex-direction: column; align-items: stretch; }
+        .nav a, .nav button, .dropdown { width: 100%; text-align: center; margin-bottom: 5px; }
+        .dropdown-content { position: static; box-shadow: none; background-color: #6a4c9f; } /* Adjust dropdown for stacked layout */
+        .nav-button { width: auto; display: inline-block; margin: 5px auto; }
+        .header { align-items: center; } /* Center logo when stacked */
+        body { padding-top: 180px; /* Increase padding significantly */ }
+        .footer { font-size: 0.8em; }
+        .footer a { margin: 0 5px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-placeholder">[Kamaliya Group Logo]</div>
+    <div class="nav">
+      <!-- Products Dropdown -->
+      <div class="dropdown">
+        <a href="#products-section">Products</a> <!-- Link to placeholder -->
+        <div class="dropdown-content" id="productsMenu">
+          <a href="#products-upload" data-action="uploads">Uploads</a>
+          <a href="#products-transform" data-action="transformations">Transformations</a>
+          <a href="#products-deliver" data-action="delivery">Delivery</a>
+          <a href="#products-ai" data-action="ai">AI</a>
+          <a href="#products-workflows" data-action="workflows">Workflows</a>
+        </div>
+      </div>
+      <!-- Other Nav Links -->
+      <a href="#features">Features</a>
+      <a href="#case-studies">Case Studies</a>
+      <a href="#docs">Docs</a>
+      <!-- SDKs Dropdown -->
+      <div class="dropdown">
+        <a href="#sdks-section">SDKs</a> <!-- Link to placeholder -->
+        <div class="dropdown-content" id="sdksMenu">
+          <a href="#sdk-javascript" data-action="javascript">JavaScript</a>
+          <a href="#sdk-react" data-action="react">React</a>
+          <a href="#sdk-angular" data-action="angular">Angular</a>
+          <a href="#sdk-python" data-action="python">Python</a>
+          <a href="#sdk-java" data-action="java">Java</a>
+          <a href="#sdk-php" data-action="php">PHP</a>
+        </div>
+      </div>
+      <!-- File Conversion Dropdown -->
+      <div class="dropdown">
+        <a href="#file-conversion-section">File Conversion</a> <!-- Link to placeholder -->
+        <div class="dropdown-content" id="fileConversionMenu">
+          <a href="#conv-webp-jpg" data-action="webp-to-jpg">WEBP to JPG</a>
+          <a href="#conv-webp-png" data-action="webp-to-png">WEBP to PNG</a>
+          <a href="#conv-jpg-webp" data-action="jpg-to-webp">JPG to WEBP</a>
+          <a href="#conv-jpg-png" data-action="jpg-to-png">JPG to PNG</a>
+          <a href="#conv-png-gif" data-action="png-to-gif">PNG to GIF</a>
+          <a href="#conv-jpg-gif" data-action="jpg-to-gif">JPG to GIF</a>
+          <a href="#conv-webp-pdf" data-action="webp-to-pdf">WEBP to PDF</a>
+          <a href="#conv-bmp-pdf" data-action="bmp-to-pdf">BMP to PDF</a>
+          <a href="#conv-more" data-action="more-tools">More Tools</a>
+        </div>
+      </div>
+      <a href="#why-kamaliya">Why Kamaliya?</a>
+      <a href="#blog">Blog</a>
+      <a href="#support">Support</a>
+      <!-- Action Buttons -->
+      <button class="nav-button" onclick="window.location.href='#signup'">Sign Up Free</button>
+      <button class="nav-button login" onclick="window.location.href='#login'">Log In</button>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="main">
+    <!-- Hero Section -->
+    <div class="hero">
+      <h1>Develop with Confidence—backed by SOC2 compliance.</h1>
+    </div>
+
+    <!-- Result Display Area (for JS feedback) -->
+    <div class="result" id="result"></div>
+
+    <!-- Core Features Cards -->
+    <div class="cards">
+      <div class="card" id="products-upload">
+        <img src="https://via.placeholder.com/50/4a2c6f/ffffff?text=U" alt="Upload Icon">
+        <h2>Upload</h2>
+        <p>Integrate seamless content uploads. Our developer API enables fast file and video ingestion from any source. Enhance your app with robust upload capabilities, URL processing, and native iOS/Android integration.</p>
+        <!-- Filestack Section Added Here -->
+        <div class="filestack-section">
+          <h4>Upload Files with Filestack</h4>
+          <p style="font-size: 0.8em; color: #666;">Click the button below to open the Filestack file picker.</p>
+          <button id="filestackUploadButton">Upload File</button>
+          <div id="filestackStatus" class="filestack-status"></div>
+          <div id="filestackResults" class="filestack-results" style="display: none;"></div>
+        </div>
+        <!-- End Filestack Section -->
+      </div>
+      <div class="card" id="products-transform">
+        <img src="https://via.placeholder.com/50/4a2c6f/ffffff?text=T" alt="Transform Icon">
+        <h2>Transform</h2>
+        <p>Optimize content delivery in your app's pipeline. Our API enables developers to transform, convert, and enhance images, files, and videos at the network level—before they reach your application.</p>
+        <!-- Transform Section -->
+        <div class="transform-section">
+          <h4>Apply Transformations</h4>
+          <p style="font-size: 0.8em; color: #666;">Select a file to apply transformations like resizing or cropping.</p>
+          <button id="transformButton">Transform File</button>
+          <div id="transformStatus" class="filestack-status"></div>
+          <div id="transformResults" class="filestack-results" style="display: none;"></div>
+        </div>
+      </div>
+
+      <div class="card" id="products-deliver">
+        <img src="https://via.placeholder.com/50/4a2c6f/ffffff?text=D" alt="Deliver Icon">
+        <h2>Deliver</h2>
+        <p>Deliver optimized content seamlessly. Our developer API prepares responsive audio, video, image, and document files for fast, secure delivery via the Kamaliya CDN. Integrate our embeddable viewer to display content efficiently within your application's interface.</p>
+        <!-- Deliver Section -->
+        <div class="deliver-section">
+          <h4>Generate Delivery URL</h4>
+          <p style="font-size: 0.8em; color: #666;">Select a file to generate an optimized delivery URL.</p>
+          <button id="deliverButton">Generate Delivery URL</button>
+          <div id="deliverStatus" class="filestack-status"></div>
+          <div id="deliverResults" class="filestack-results" style="display: none;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card" id="products-ai">
+        <img src="https://via.placeholder.com/50/4a2c6f/ffffff?text=AI" alt="AI Icon">
+        <h2>AI</h2>
+        <p>Harness automation to boost development efficiency. Our API empowers developers to focus on core business logic by streamlining content processing, transforming raw data into actionable business intelligence without the complexity and scalability challenges of building custom solutions.</p>
+        <button id="aiButton">Explore AI Features</button>
+        <div id="aiStatus" class="filestack-status"></div>
+        <div id="aiResults" class="filestack-results" style="display: none;"></div>
+      </div>
+
+      <div class="card" id="products-workflows">
+        <img src="https://via.placeholder.com/50/4a2c6f/ffffff?text=W" alt="Workflows Icon">
+        <h2>Workflows</h2>
+        <p>Customize content pipelines with powerful workflows. Our API enables developers to implement conditional logic and image processing, enforcing business rules and automating content ingestion. Reduce workflow development time by leveraging our flexible workflow tools to handle complex file operations.</p>
+        <button id="workflowsButton">Explore Workflows</button>
+        <div id="workflowsStatus" class="filestack-status"></div>
+        <div id="workflowsResults" class="filestack-results" style="display: none;"></div>
+      </div>
+
+      <div class="card" id="products-section"> <!-- Placeholder for main Products link -->
+          <img src="https://via.placeholder.com/50/4a2c6f/ffffff?text=P" alt="Products Icon">
+          <h2>Our Products</h2>
+          <p>Explore our range of products including Upload, Transform, Deliver, AI, and Workflows designed to streamline your development process. Click the 'Products' dropdown in the header for details.</p>
+          <button id="productsButton">View All Products</button>
+          <div id="productsStatus" class="filestack-status"></div>
+          <div id="productsResults" class="filestack-results" style="display: none;"></div>
+      </div>
+    </div>
+
+    <!-- Placeholder Sections for Header Links -->
+    <div id="features" class="placeholder-section">
+      <h2>Features</h2>
+      <p>This section will detail the specific features offered by Kamaliya Group's services, such as advanced transformations, security options, CDN capabilities, and more.</p>
+    </div>
+
+    <div id="case-studies" class="placeholder-section">
+      <h2>Case Studies</h2>
+      <p>Read about how businesses like yours have successfully implemented Kamaliya Group solutions to improve their applications and workflows. Real-world examples and results will be presented here.</p>
+    </div>
+
+    <div id="docs" class="placeholder-section">
+      <h2>Documentation</h2>
+      <p>Access comprehensive developer documentation, API references, tutorials, and guides to help you integrate and utilize Kamaliya Group services effectively.</p>
+    </div>
+
+    <div id="sdks-section" class="placeholder-section">
+      <h2>SDKs</h2>
+      <p>Find Software Development Kits (SDKs) for various platforms and languages (like JavaScript, React, Python, Java, PHP) to easily integrate Kamaliya Group into your application stack. Select a specific SDK from the dropdown menu.</p>
+       <!-- Add sub-placeholders if needed, e.g., -->
+       <div id="sdk-javascript" style="margin-top: 20px; padding-top: 10px; border-top: 1px dashed #ccc;"><h3>JavaScript SDK</h3><p>Details about the JS SDK.</p></div>
+       <div id="sdk-react" style="margin-top: 20px; padding-top: 10px; border-top: 1px dashed #ccc;"><h3>React SDK</h3><p>Details about the React SDK.</p></div>
+       <div id="sdk-angular" style="margin-top: 20px; padding-top: 10px; border-top: 1px dashed #ccc;"><h3>Angular SDK</h3><p>Details about the Angular SDK.</p></div>
+       <div id="sdk-python" style="margin-top: 20px; padding-top: 10px; border-top: 1px dashed #ccc;"><h3>Python SDK</h3><p>Details about the Python SDK.</p></div>
+       <div id="sdk-java" style="margin-top: 20px; padding-top: 10px; border-top: 1px dashed #ccc;"><h3>Java SDK</h3><p>Details about the Java SDK.</p></div>
+       <div id="sdk-php" style="margin-top: 20px; padding-top: 10px; border-top: 1px dashed #ccc;"><h3>PHP SDK</h3><p>Details about the PHP SDK.</p></div>
+    </div>
+
+    <div id="file-conversion-section" class="placeholder-section">
+      <h2>File Conversion Tools</h2>
+      <p>Utilize our powerful file conversion capabilities directly or via API. Convert between various image formats (WEBP, JPG, PNG, GIF), documents (to PDF), and more. Select specific tools from the dropdown.</p>
+        <!-- Add sub-placeholders if needed, e.g., -->
+       <div id="conv-webp-jpg" style="margin-top: 20px; padding-top: 10px; border-top: 1px dashed #ccc;"><h3>WEBP to JPG</h3><p>Tool/Info for WEBP to JPG conversion.</p></div>
+       <div id="conv-webp-png" style="margin-top: 20px; padding-top: 10px; border-top: 1px dashed #ccc;"><h3>WEBP to PNG</h3><p>Tool/Info for WEBP to PNG conversion.</p></div>
+       <div id="conv-jpg-webp" style="margin-top: 20px; padding-top: 10px; border-top: 1px dashed #ccc;"><h3>JPG to WEBP</h3><p>Tool/Info for JPG to WEBP conversion.</p></div>
+       <div id="conv-jpg-png" style="margin-top: 20px; padding-top: 10px; border-top: 1px dashed #ccc;"><h3>JPG to PNG</h3><p>Tool/Info for JPG to PNG conversion.</p></div>
+       <div id="conv-png-gif" style="margin-top: 20px; padding-top: 10px; border-top: 1px dashed #ccc;"><h3>PNG to GIF</h3><p>Tool/Info for PNG to GIF conversion.</p></div>
+       <div id="conv-jpg-gif" style="margin-top: 20px; padding-top: 10px; border-top: 1px dashed #ccc;"><h3>JPG to GIF</h3><p>Tool/Info for JPG to GIF conversion.</p></div>
+       <div id="conv-webp-pdf" style="margin-top: 20px; padding-top: 10px; border-top: 1px dashed #ccc;"><h3>WEBP to PDF</h3><p>Tool/Info for WEBP to PDF conversion.</p></div>
+       <div id="conv-bmp-pdf" style="margin-top: 20px; padding-top: 10px; border-top: 1px dashed #ccc;"><h3>BMP to PDF</h3><p>Tool/Info for BMP to PDF conversion.</p></div>
+       <div id="conv-more" style="margin-top: 20px; padding-top: 10px; border-top: 1px dashed #ccc;"><h3>More Conversion Tools</h3><p>Explore all available file conversion options.</p></div>
+    </div>
+
+    <div id="why-kamaliya" class="placeholder-section">
+      <h2>Why Kamaliya Group?</h2>
+      <p>Discover the advantages of partnering with Kamaliya Group: reliability (SOC2 compliant), performance, developer-centric tools, scalability, and excellent support.</p>
+    </div>
+
+    <div id="blog" class="placeholder-section">
+      <h2>Blog</h2>
+      <p>Stay updated with the latest news, feature releases, industry insights, tutorials, and best practices from the Kamaliya Group team.</p>
+    </div>
+
+    <div id="support" class="placeholder-section">
+      <h2>Support</h2>
+      <p>Find help and resources. Access our knowledge base, FAQs, community forums, or contact our support team for assistance.</p>
+    </div>
+
+     <div id="pricing" class="placeholder-section">
+      <h2>Plans & Pricing</h2>
+      <p>Explore our flexible pricing plans designed for different needs, from startups to large enterprises. Find the plan that best fits your usage requirements. The Start Plan is $69 Monthly + Free for 21 days.</p>
+    </div>
+
+     <div id="login" class="placeholder-section">
+      <h2>Log In</h2>
+      <p>Access your Kamaliya Group account dashboard here. (Login form would typically go here).</p>
+      <!-- Add a simple login form placeholder if needed -->
+      <form style="margin-top: 20px; max-width: 400px;">
+          <input type="email" placeholder="Email" required style="padding: 10px; margin-bottom: 10px; width: 100%; box-sizing: border-box;">
+          <input type="password" placeholder="Password" required style="padding: 10px; margin-bottom: 10px; width: 100%; box-sizing: border-box;">
+          <button type="submit" class="cta-button" style="background-color: #4a2c6f; color: white;">Log In</button>
+      </form>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="cta">
+      <h2>Join the 100,000+ Applications Using Kamaliya Group</h2>
+      <p>Getting started is fast, free, and easy. Improve your file upload performance today. Sign up now for free!</p>
+      <button class="cta-button" onclick="window.location.href='#signup'">Sign Up Free</button>
+      <a href="#pricing">Plans & Pricing</a>
+    </div>
+
+    <!-- Signup Form Section -->
+    <div id="signup" class="card">
+      <h2>Welcome to the Kamaliya Group Start Plan</h2>
+      <p>$69 Monthly + Free for 21 days</p>
+      <p>Developer-first upload and processing API</p>
+      <form id="signupForm">
+        <input type="text" placeholder="First Name*" required>
+        <input type="text" placeholder="Last Name" required>
+        <input type="text" placeholder="Phone">
+        <input type="text" placeholder="Company">
+        <input type="email" placeholder="Email*" required>
+        <select name="country">
+          <option value="">Country</option>
+          <option value="Canada">Canada</option>
+          <option value="United States">United States</option>
+          <option value="United Kingdom">United Kingdom</option>
+          <option value="Australia">Australia</option>
+          <option value="Germany">Germany</option>
+          <option value="France">France</option>
+          <!-- Add more countries as needed -->
+        </select>
+        <input type="password" placeholder="Password*" required>
+        <input type="password" placeholder="Confirm Password*" required>
+        <label><input type="checkbox" required> I'm not a robot (Required)</label> <!-- Added required for basic check -->
+        <button type="submit" class="cta-button" style="background-color: #4a2c6f; color: white;">Get Started Free</button>
+        <p>By filling and submitting this form you understand and agree that the use of Kamaliya Group's website is subject to the <a href="#terms">General Website Terms of Use</a>. Additional details regarding Kamaliya Group's collection and use of your personal information, including information about access, retention, rectification, deletion, security, cross-border transfers and other topics, is available in the <a href="#privacy">Privacy Policy</a>.</p>
+        <p>Having trouble signing up? Try our <a href="#troubleshooting">troubleshooting help</a>. Have any questions? <a href="#contact">Contact Us</a></p>
+      </form>
+    </div>
+
+    <!-- More Placeholder Sections (from form/footer) -->
+    <div id="terms" class="placeholder-section">
+      <h2>General Website Terms of Use</h2>
+      <p>This section will contain the full text of the website's terms of use.</p>
+    </div>
+    <div id="privacy" class="placeholder-section">
+      <h2>Privacy Policy</h2>
+      <p>This section will detail how Kamaliya Group collects, uses, and protects user data.</p>
+    </div>
+     <div id="troubleshooting" class="placeholder-section">
+      <h2>Sign Up Troubleshooting</h2>
+      <p>Find solutions to common problems encountered during the sign-up process.</p>
+    </div>
+     <div id="contact" class="placeholder-section">
+      <h2>Contact Us</h2>
+      <p>Get in touch with Kamaliya Group sales or support teams via contact forms, email addresses, or phone numbers provided here.</p>
+    </div>
+     <div id="facebook" class="placeholder-section">
+      <h2>Facebook</h2>
+      <p>Link to the Kamaliya Group Facebook page would go here.</p>
+    </div>
+     <div id="twitter" class="placeholder-section">
+      <h2>Twitter</h2>
+      <p>Link to the Kamaliya Group Twitter profile would go here.</p>
+    </div>
+     <div id="chat" class="placeholder-section">
+      <h2>Chat Support</h2>
+      <p>Information or a link to initiate a live chat support session.</p>
+    </div>
+
+  </div> <!-- End Main Content -->
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>© 2025 Kamaliya Group. All rights reserved.</p>
+    <div>
+      <a href="#facebook"><img src="https://via.placeholder.com/20/ffffff/000000?text=F" alt="Facebook"></a>
+      <a href="#twitter"><img src="https://via.placeholder.com/20/ffffff/000000?text=T" alt="Twitter"></a>
+      <a href="#chat"><img src="https://via.placeholder.com/20/ffffff/000000?text=C" alt="Chat"></a>
+    </div>
+  </div>
+
+  <!-- JavaScript for Dropdown Actions and Filestack -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const productsMenu = document.getElementById('productsMenu');
+      const sdksMenu = document.getElementById('sdksMenu');
+      const fileConversionMenu = document.getElementById('fileConversionMenu');
+      const result = document.getElementById('result');
+      const allDropdownLinks = document.querySelectorAll('.dropdown-content a');
+      const signupForm = document.getElementById('signupForm');
+
+      // Function to display messages
+      function showResult(message) {
+          result.textContent = message;
+          result.style.display = 'block';
+          // Optional: scroll to the result message
+          // result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          console.log(message); // Also log to console
+           // Hide message after a few seconds
+           setTimeout(() => {
+               result.style.display = 'none';
+           }, 5000); // Hide after 5 seconds
+      }
+
+      // Add event listeners to all dropdown links
+      allDropdownLinks.forEach(item => {
+        item.addEventListener('click', (e) => {
+          // Don't prevent default if it's an actual anchor link like #conv-webp-jpg
+          // e.preventDefault(); // Keep this commented to allow anchor links to work
+          const action = item.getAttribute('data-action');
+          const text = item.textContent;
+          let message = '';
+
+          if (action) {
+              // Simulate action based on data-action
+              switch (action) {
+                  // Products
+                  case 'uploads': message = `Navigating to Uploads details... (Simulated Action)`; break;
+                  case 'transformations': message = `Navigating to Transformations details... (Simulated Action)`; break;
+                  case 'delivery': message = `Navigating to Delivery details... (Simulated Action)`; break;
+                  case 'ai': message = `Navigating to AI features... (Simulated Action)`; break;
+                  case 'workflows': message = `Navigating to Workflows information... (Simulated Action)`; break;
+                  // SDKs
+                  case 'javascript': message = `Showing JavaScript SDK information... (Simulated Action)`; break;
+                  case 'react': message = `Showing React SDK information... (Simulated Action)`; break;
+                  case 'angular': message = `Showing Angular SDK information... (Simulated Action)`; break;
+                  case 'python': message = `Showing Python SDK information... (Simulated Action)`; break;
+                  case 'java': message = `Showing Java SDK information... (Simulated Action)`; break;
+                  case 'php': message = `Showing PHP SDK information... (Simulated Action)`; break;
+                  // File Conversions
+                  case 'webp-to-jpg': message = `Loading WEBP to JPG converter... (Simulated Action)`; break;
+                  case 'webp-to-png': message = `Loading WEBP to PNG converter... (Simulated Action)`; break;
+                  case 'jpg-to-webp': message = `Loading JPG to WEBP converter... (Simulated Action)`; break;
+                  case 'jpg-to-png': message = `Loading JPG to PNG converter... (Simulated Action)`; break;
+                  case 'png-to-gif': message = `Loading PNG to GIF converter... (Simulated Action)`; break;
+                  case 'jpg-to-gif': message = `Loading JPG to GIF converter... (Simulated Action)`; break;
+                  case 'webp-to-pdf': message = `Loading WEBP to PDF converter... (Simulated Action)`; break;
+                  case 'bmp-to-pdf': message = `Loading BMP to PDF converter... (Simulated Action)`; break;
+                  case 'more-tools': message = `Accessing additional conversion tools... (Simulated Action)`; break;
+                  default: message = `Performing action: ${action}... (Simulated Action)`;
+              }
+              showResult(message);
+          }
+          // Allow the anchor link (#...) to navigate after showing the message
+          // Close dropdown manually if needed (optional)
+            const dropdown = item.closest('.dropdown');
+            if (dropdown) {
+                // You might need more complex logic if you want instant close
+            }
+        });
+      });
+
+       // Handle Sign Up Form Submission (Simulation)
+        signupForm.addEventListener('submit', (e) => {
+            e.preventDefault(); // Prevent actual form submission
+            const email = signupForm.querySelector('input[type="email"]').value;
+            showResult(`Simulating sign up for ${email}... Check console for details. Redirecting would happen here.`);
+            // In a real scenario, you'd send data to a server here.
+            console.log('Sign up form submitted (simulated):', {
+                firstName: signupForm.querySelector('input[placeholder="First Name*"]').value,
+                lastName: signupForm.querySelector('input[placeholder="Last Name"]').value,
+                phone: signupForm.querySelector('input[placeholder="Phone"]').value,
+                company: signupForm.querySelector('input[placeholder="Company"]').value,
+                email: email,
+                country: signupForm.querySelector('select[name="country"]').value,
+                // NEVER log passwords
+            });
+             // Optionally clear the form
+             // signupForm.reset();
+        });
+
+      // --- Filestack Functionality ---
+      const filestackApiKey = 'ATSWDHJMQGWb7pinCtO1gz'; // Your Filestack API Key
+      const filestackClient = filestack.init(filestackApiKey);
+
+      const filestackUploadButton = document.getElementById('filestackUploadButton');
+      const filestackStatus = document.getElementById('filestackStatus');
+      const filestackResults = document.getElementById('filestackResults');
+
+      // Debugging: Log when the script initializes
+      console.log('Filestack script initialized.');
+
+      filestackUploadButton.addEventListener('click', () => {
+        console.log('Upload button clicked. Initializing picker...'); // Debugging: Log button click
+
+        const options = {
+          maxFiles: 5, // Example: Allow up to 5 files
+          accept: ['image/*', 'video/*', '.pdf'], // Example: Accept images, videos, pdfs
+          fromSources: ['local_file_system', 'url', 'googledrive', 'dropbox'], // Specify allowed sources
+          imageMax: [1920, 1920], // Max image dimensions (width, height)
+          imageMin: [100, 100],   // Min image dimensions (width, height)
+          transformations: {      // Enable image editor
+            crop: true,
+            circle: true,
+            rotate: true
+          },
+          onUploadDone: async (res) => {
+            console.log('Filestack Upload Response:', res); // Debugging: Log upload response
+            filestackStatus.textContent = 'Upload Complete!';
+            // Display basic info about uploaded files
+            let resultsHTML = '<h4>Uploaded Files:</h4><ul>';
+            for (const file of res.filesUploaded) {
+              resultsHTML += `<li>${file.filename} (${file.mimetype}) - <a href="${file.url}" target="_blank">View File</a></li>`;
+
+              // Post-Upload Processing: OCR and Resizing
+              try {
+                // Perform OCR using Filestack transformation API
+                const ocrUrl = filestackClient.transform(file.handle, {
+                  tasks: [
+                    {
+                      name: 'ocr',
+                      params: { language: 'eng' }
+                    }
+                  ]
+                });
+                console.log(`OCR URL for ${file.filename}:`, ocrUrl);
+
+                // Perform resizing using Filestack transformation API
+                const resizedUrl = filestackClient.transform(file.handle, {
+                  resize: {
+                    width: 800,
+                    height: 600
+                  }
+                });
+                console.log(`Resized URL for ${file.filename}:`, resizedUrl);
+
+                // Append OCR and resized links to results
+                resultsHTML += `<ul>
+                  <li><a href="${ocrUrl}" target="_blank">OCR Result</a></li>
+                  <li><a href="${resizedUrl}" target="_blank">Resized Image</a></li>
+                </ul>`;
+              } catch (error) {
+                console.error(`Error processing file ${file.filename}:`, error);
+              }
+            }
+            resultsHTML += '</ul>';
+            filestackResults.innerHTML = resultsHTML;
+            filestackResults.style.display = 'block';
+          },
+          onOpen: () => {
+            console.log('Filestack picker opened.'); // Debugging: Log picker open event
+            filestackStatus.textContent = 'Picker opened...';
+            filestackResults.style.display = 'none'; // Hide previous results
+          },
+          onClose: () => {
+            console.log('Filestack picker closed.'); // Debugging: Log picker close event
+            if (filestackStatus.textContent === 'Picker opened...') {
+              filestackStatus.textContent = 'Picker closed.';
+            }
+          }
+        };
+
+        try {
+          filestackClient.picker(options).open();
+        } catch (error) {
+          console.error('Error initializing Filestack picker:', error); // Debugging: Log initialization errors
+          filestackStatus.textContent = 'Error initializing picker. Check console for details.';
+        }
+      });
+
+      // Transform Functionality
+      const transformButton = document.getElementById('transformButton');
+      const transformStatus = document.getElementById('transformStatus');
+      const transformResults = document.getElementById('transformResults');
+
+      transformButton.addEventListener('click', () => {
+        console.log('Transform button clicked. Initializing picker...');
+
+        const options = {
+          maxFiles: 1, // Allow only one file for transformation
+          accept: ['image/*'], // Accept only images
+          onUploadDone: (res) => {
+            console.log('Transform Upload Response:', res);
+            transformStatus.textContent = 'File uploaded. Applying transformations...';
+
+            const file = res.filesUploaded[0];
+            try {
+              // Apply resizing transformation
+              const resizedUrl = filestackClient.transform(file.handle, {
+                resize: {
+                  width: 800,
+                  height: 600
+                }
+              });
+              console.log(`Resized URL: ${resizedUrl}`);
+
+              // Apply cropping transformation
+              const croppedUrl = filestackClient.transform(file.handle, {
+                crop: {
+                  dim: [100, 100, 400, 400] // x, y, width, height
+                }
+              });
+              console.log(`Cropped URL: ${croppedUrl}`);
+
+              // Display results
+              transformResults.innerHTML = `<ul>
+                <li><a href="${resizedUrl}" target="_blank">Resized Image</a></li>
+                <li><a href="${croppedUrl}" target="_blank">Cropped Image</a></li>
+              </ul>`;
+              transformResults.style.display = 'block';
+              transformStatus.textContent = 'Transformations applied successfully!';
+            } catch (error) {
+              console.error('Error applying transformations:', error);
+              transformStatus.textContent = 'Error applying transformations. Check console for details.';
+            }
+          }
+        };
+
+        filestackClient.picker(options).open();
+      });
+
+      // Deliver Functionality
+      const deliverButton = document.getElementById('deliverButton');
+      const deliverStatus = document.getElementById('deliverStatus');
+      const deliverResults = document.getElementById('deliverResults');
+
+      deliverButton.addEventListener('click', () => {
+        console.log('Deliver button clicked. Initializing picker...');
+
+        const options = {
+          maxFiles: 1, // Allow only one file for delivery
+          accept: ['image/*', 'video/*', '.pdf'], // Accept images, videos, and PDFs
+          onUploadDone: (res) => {
+            console.log('Deliver Upload Response:', res);
+            deliverStatus.textContent = 'File uploaded. Generating delivery URL...';
+
+            const file = res.filesUploaded[0];
+            try {
+              // Generate optimized delivery URL
+              const deliveryUrl = filestackClient.transform(file.handle, {
+                output: {
+                  quality: 'auto',
+                  format: 'auto'
+                }
+              });
+              console.log(`Delivery URL: ${deliveryUrl}`);
+
+              // Display result
+              deliverResults.innerHTML = `<a href="${deliveryUrl}" target="_blank">Optimized Delivery URL</a>`;
+              deliverResults.style.display = 'block';
+              deliverStatus.textContent = 'Delivery URL generated successfully!';
+            } catch (error) {
+              console.error('Error generating delivery URL:', error);
+              deliverStatus.textContent = 'Error generating delivery URL. Check console for details.';
+            }
+          }
+        };
+
+        filestackClient.picker(options).open();
+      });
+
+      // SDKs Functionality
+      const sdkLinks = document.querySelectorAll('#sdksMenu a');
+      sdkLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const sdkName = link.getAttribute('data-action');
+          const sdkSection = document.getElementById(`sdk-${sdkName}`);
+          if (sdkSection) {
+            sdkSection.scrollIntoView({ behavior: 'smooth' });
+            alert(`Navigated to ${sdkName} SDK section.`);
+          } else {
+            alert(`SDK section for ${sdkName} not found.`);
+          }
+        });
+      });
+
+      // File Conversion Functionality
+      const fileConversionLinks = document.querySelectorAll('#fileConversionMenu a');
+      fileConversionLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const conversionType = link.getAttribute('data-action');
+          const conversionSection = document.getElementById(`conv-${conversionType}`);
+          if (conversionSection) {
+            conversionSection.scrollIntoView({ behavior: 'smooth' });
+            alert(`Navigated to ${conversionType} conversion tool.`);
+          } else {
+            alert(`Conversion tool for ${conversionType} not found.`);
+          }
+        });
+      });
+
+      // File Conversion Tools Functionality
+      const fileConversionTools = {
+        'webp-to-jpg': () => alert('Converting WEBP to JPG... (Simulated Action)'),
+        'webp-to-png': () => alert('Converting WEBP to PNG... (Simulated Action)'),
+        'jpg-to-webp': () => alert('Converting JPG to WEBP... (Simulated Action)'),
+        'jpg-to-png': () => alert('Converting JPG to PNG... (Simulated Action)'),
+        'png-to-gif': () => alert('Converting PNG to GIF... (Simulated Action)'),
+        'jpg-to-gif': () => alert('Converting JPG to GIF... (Simulated Action)'),
+        'webp-to-pdf': () => alert('Converting WEBP to PDF... (Simulated Action)'),
+        'bmp-to-pdf': () => alert('Converting BMP to PDF... (Simulated Action)'),
+        'more-tools': () => alert('Exploring more conversion tools... (Simulated Action)')
+      };
+
+      fileConversionLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const conversionType = link.getAttribute('data-action');
+          if (fileConversionTools[conversionType]) {
+            fileConversionTools[conversionType]();
+          } else {
+            alert(`Conversion tool for ${conversionType} not implemented yet.`);
+          }
+        });
+      });
+
+      const aiButton = document.getElementById('aiButton');
+      const aiStatus = document.getElementById('aiStatus');
+      const aiResults = document.getElementById('aiResults');
+
+      aiButton.addEventListener('click', () => {
+        aiStatus.textContent = 'Exploring AI features...';
+        aiResults.innerHTML = '<p>AI features include content processing, data transformation, and actionable insights generation.</p>';
+        aiResults.style.display = 'block';
+      });
+
+      const workflowsButton = document.getElementById('workflowsButton');
+      const workflowsStatus = document.getElementById('workflowsStatus');
+      const workflowsResults = document.getElementById('workflowsResults');
+
+      workflowsButton.addEventListener('click', () => {
+        workflowsStatus.textContent = 'Exploring Workflows...';
+        workflowsResults.innerHTML = '<p>Workflows allow you to automate content pipelines with conditional logic and image processing.</p>';
+        workflowsResults.style.display = 'block';
+      });
+
+      const productsButton = document.getElementById('productsButton');
+      const productsStatus = document.getElementById('productsStatus');
+      const productsResults = document.getElementById('productsResults');
+
+      productsButton.addEventListener('click', () => {
+        productsStatus.textContent = 'Loading all products...';
+        productsResults.innerHTML = '<p>Our products include Upload, Transform, Deliver, AI, and Workflows. Explore each to learn more.</p>';
+        productsResults.style.display = 'block';
+      });
+    });
+  </script>
+</body>
+</html>
